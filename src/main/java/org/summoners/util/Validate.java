@@ -1,7 +1,7 @@
 package org.summoners.util;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 /**
  * @author Joseph Robert Melsha (jrmelsha@olivet.edu)
@@ -148,6 +148,13 @@ public final class Validate {
 		if (value != null)
 			throw offsetSuppliedException(exceptionSupplier.get(), 2);
 		return null;
+	}
+	
+	public static <E, T extends Throwable> boolean check(E item, Predicate<E> checker, Function<E, String> message, Class<? extends T> type) throws T {
+		if (checker.test(item))
+			throw createException(type, message.apply(item), 1);
+		
+		return true;
 	}
 
 	// == true
