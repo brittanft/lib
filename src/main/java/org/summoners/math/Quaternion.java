@@ -1,4 +1,4 @@
-package org.summoners.util;
+package org.summoners.math;
 
 public class Quaternion {
 	

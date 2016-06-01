@@ -1,4 +1,4 @@
-package org.summoners.util;
+package org.summoners.math;
 
 /**
  * @author Joseph Robert Melsha (jrmelsha@olivet.edu)

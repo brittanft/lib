@@ -1,4 +1,4 @@
-package org.summoners.util;
+package org.summoners.math;
 
 import java.security.*;
 import java.util.*;
