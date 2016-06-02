@@ -1,26 +1,26 @@
-package com.asksunny.ssl.client;
+package org.summoners.rtmpp.pipeline;
 
 import java.io.*;
 import java.util.logging.*;
 
-import org.summoners.netty.pipeline.*;
+import org.summoners.rtmpp.codec.*;
 import org.summoners.util.*;
 
 import io.netty.buffer.*;
 import io.netty.channel.*;
 
-public enum HandShakeState {
+public enum HandshakeState {
 	VERSION() {
 		@Override
-		protected boolean process(ChannelHandlerContext ctx, ByteBuf in, HandShake h) throws Exception {
-			Logger.getLogger(HandShakeState.class.getName()).log(Level.INFO, "state: " + name() + ", r:" + in.readableBytes());
+		protected boolean process(ChannelHandlerContext ctx, ByteBuf in, HandshakeHandler h) throws Exception {
+			Logger.getLogger(HandshakeState.class.getName()).log(Level.INFO, "state: " + name() + ", r:" + in.readableBytes());
 			return in.readByte() == 0x03;
 		}
 	},
 	CERT(1536) {
 		@Override
-		protected boolean process(ChannelHandlerContext ctx, ByteBuf in, HandShake h) throws Exception {
-			Logger.getLogger(HandShakeState.class.getName()).log(Level.INFO, "state: " + name() + ", r:" + in.readableBytes());
+		protected boolean process(ChannelHandlerContext ctx, ByteBuf in, HandshakeHandler h) throws Exception {
+			Logger.getLogger(HandshakeState.class.getName()).log(Level.INFO, "state: " + name() + ", r:" + in.readableBytes());
 			h.setTimestamp(in.readInt());
 			int unknown = in.readInt();
 			System.out.println("Unk: " + unknown);
@@ -38,8 +38,8 @@ public enum HandShakeState {
 	},
 	IDK(1536) {
 		@Override
-		protected boolean process(ChannelHandlerContext ctx, ByteBuf in, HandShake h) throws Exception {
-			Logger.getLogger(HandShakeState.class.getName()).log(Level.INFO, "state: " + name() + ", r:" + in.readableBytes());
+		protected boolean process(ChannelHandlerContext ctx, ByteBuf in, HandshakeHandler h) throws Exception {
+			Logger.getLogger(HandshakeState.class.getName()).log(Level.INFO, "state: " + name() + ", r:" + in.readableBytes());
 	        byte[] data = new byte[1536];
 	        for (int i = 0; i < data.length; i++)
 	        	data[i] = in.readByte();
@@ -62,7 +62,7 @@ public enum HandShakeState {
 		}
 	};
 
-	protected boolean process(ChannelHandlerContext ctx, ByteBuf in, HandShake h) throws Exception {
+	protected boolean process(ChannelHandlerContext ctx, ByteBuf in, HandshakeHandler h) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -75,7 +75,7 @@ public enum HandShakeState {
 	 * Creates a new type of handshake state.
 	 * @param predicate - the triple predicate to consume the context, buffer, and session.
 	 */
-	private HandShakeState() {
+	private HandshakeState() {
 		this(0);
 	}
 
@@ -84,7 +84,7 @@ public enum HandShakeState {
 	 * @param required - the number of bytes required for the decoder to resume.
 	 * @param predicate - the triple predicate to consume the context, buffer, and session.
 	 */
-	private HandShakeState(int required) {
+	private HandshakeState(int required) {
 		this.required = required;
 	}
 
@@ -96,20 +96,20 @@ public enum HandShakeState {
 	 * @return the next state in the progression of the decoder.
 	 * @throws Exception
 	 */
-	public HandShakeState progress(ChannelHandlerContext context, ByteBuf in, HandShake handshake) throws Exception {
+	public HandshakeState progress(ChannelHandlerContext context, ByteBuf in, HandshakeHandler handshake) throws Exception {
 		return progress(this, context, in, handshake);
 	}
 
 	/**
 	 * The static final array of values.
 	 */
-	private static HandShakeState[] VALUES = values();
+	private static HandshakeState[] VALUES = values();
 
 	/**
 	 * Gets the first value in this enum.
 	 * @return the first value in this enum.
 	 */
-	public static HandShakeState getFirst() {
+	public static HandshakeState getFirst() {
 		return VALUES[0];
 	}
 
@@ -122,8 +122,8 @@ public enum HandShakeState {
 	 * @return the next state in the progression of the decoder.
 	 * @throws Exception
 	 */
-	private static HandShakeState progress(HandShakeState cur, ChannelHandlerContext context, ByteBuf in, HandShake handshake) throws Exception {
-		Logger.getLogger(HandShakeState.class.getName()).log(Level.INFO, "readable: " + in.readableBytes());
+	private static HandshakeState progress(HandshakeState cur, ChannelHandlerContext context, ByteBuf in, HandshakeHandler handshake) throws Exception {
+		Logger.getLogger(HandshakeState.class.getName()).log(Level.INFO, "readable: " + in.readableBytes());
 		for (int pos = cur.ordinal(); cur != null; cur = ++pos < VALUES.length ? VALUES[pos] : null) {
 			if (!in.isReadable(cur.required))
 				break;

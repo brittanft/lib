@@ -1,4 +1,4 @@
-package com.asksunny.ssl;
+package org.summoners.rtmpp.crypto;
 
 import javax.net.ssl.ManagerFactoryParameters;
 import javax.net.ssl.TrustManager;
@@ -13,7 +13,7 @@ import java.security.cert.X509Certificate;
  * Bogus {@link TrustManagerFactorySpi} which accepts any certificate
  * even if it is invalid.
  */
-public class SecureSocketTrustManagerFactory extends TrustManagerFactorySpi {
+public class SslTrustManagerFactory extends TrustManagerFactorySpi {
 
     private static final TrustManager DUMMY_TRUST_MANAGER = new X509TrustManager() {
         @Override

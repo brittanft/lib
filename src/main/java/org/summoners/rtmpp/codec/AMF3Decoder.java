@@ -1,4 +1,4 @@
-package org.summoners.netty.pipeline;
+package org.summoners.rtmpp.codec;
 
 import java.io.*;
 import java.nio.*;
@@ -7,7 +7,7 @@ import java.util.logging.*;
 
 import org.summoners.function.*;
 import org.summoners.rtmp.encoding.*;
-import org.summoners.rtmpp.*;
+import org.summoners.rtmpp.data.*;
 import org.summoners.util.*;
 
 import io.netty.buffer.*;

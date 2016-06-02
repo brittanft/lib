@@ -1,4 +1,4 @@
-package org.summoners.netty.pipeline;
+package org.summoners.rtmpp.codec;
 
 import io.netty.buffer.*;
 import io.netty.channel.*;
@@ -6,13 +6,12 @@ import io.netty.channel.*;
 import java.util.*;
 import java.util.logging.*;
 
-import org.summoners.rtmp.encoding.*;
-
-import com.asksunny.ssl.client.*;
+import org.summoners.rtmpp.data.*;
+import org.summoners.rtmpp.pipeline.*;
 
 public class AMF3ConnectEncoder extends AMF3Encoder {
 	
-    private static final Logger logger = Logger.getLogger(HandShake.class.getName());
+    private static final Logger logger = Logger.getLogger(HandshakeHandler.class.getName());
     
     public AMF3ConnectEncoder() {
     	super(ObjectMap.class);

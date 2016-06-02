@@ -1,4 +1,4 @@
-package com.asksunny.ssl;
+package org.summoners.rtmpp.crypto;
 
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.internal.SystemPropertyUtil;
@@ -35,7 +35,7 @@ import javax.net.ssl.TrustManager;
  *     to validate the client certificate.</li>
  * </ul>
  */
-public final class SecureSocketSslContextFactory {
+public final class SslContextFactory {
 
     private static final String PROTOCOL = "TLS";
     private static final SSLContext SERVER_CONTEXT;
@@ -53,12 +53,12 @@ public final class SecureSocketSslContextFactory {
             //
         	//SecureSocketSslContextFactory.class.getResourceAsStream("/securesocket.jks")
         	KeyStore ks = KeyStore.getInstance("JKS");
-            ks.load(SecureSocketKeyStore.asInputStream(),
-            		SecureSocketKeyStore.getKeyStorePassword());
+            ks.load(SslKeyStore.asInputStream(),
+            		SslKeyStore.getKeyStorePassword());
 
             // Set up key manager factory to use our key store
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(algorithm);
-            kmf.init(ks, SecureSocketKeyStore.getCertificatePassword());
+            kmf.init(ks, SslKeyStore.getCertificatePassword());
 
             // Initialize the SSLContext to work with our key managers.
             serverContext = SSLContext.getInstance(PROTOCOL);
@@ -70,7 +70,7 @@ public final class SecureSocketSslContextFactory {
 
         try {
             clientContext = SSLContext.getInstance(PROTOCOL);
-            clientContext.init(null, SecureSocketTrustManagerFactory.getTrustManagers(), null);
+            clientContext.init(null, SslTrustManagerFactory.getTrustManagers(), null);
         } catch (Exception e) {
             throw new Error(
                     "Failed to initialize the client-side SSLContext", e);
@@ -88,7 +88,7 @@ public final class SecureSocketSslContextFactory {
         return CLIENT_CONTEXT;
     }
 
-    private SecureSocketSslContextFactory() {
+    private SslContextFactory() {
         // Unused
     }
 }

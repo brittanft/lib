@@ -11,6 +11,8 @@ import javax.net.ssl.SSLSocket;
 import javax.xml.bind.DatatypeConverter;
 
 import org.summoners.rtmp.*;
+import org.summoners.rtmp.Packet;
+import org.summoners.rtmpp.data.*;
 
 /**
  * Decodes AMF3 data and packets from RTMP

@@ -1,4 +1,4 @@
-package org.summoners.rtmp.encoding;
+package org.summoners.rtmpp.data;
 
 import java.util.Date;
 import java.util.HashMap;

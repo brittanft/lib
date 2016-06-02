@@ -21,6 +21,7 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import org.summoners.rtmp.encoding.*;
+import org.summoners.rtmpp.data.*;
 
 /**
  * A very basic RTMPS client

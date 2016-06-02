@@ -3,6 +3,8 @@ package org.summoners.rtmp.encoding;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import org.summoners.rtmpp.data.*;
+
 /**
  * Simple JSON parser. Throws a RuntimeException on parsing error
  * 

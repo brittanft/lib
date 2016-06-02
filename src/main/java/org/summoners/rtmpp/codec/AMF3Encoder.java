@@ -1,9 +1,10 @@
-package org.summoners.netty.pipeline;
+package org.summoners.rtmpp.codec;
 
 import java.io.*;
 import java.util.*;
 
 import org.summoners.rtmp.encoding.*;
+import org.summoners.rtmpp.data.*;
 
 import io.netty.buffer.*;
 import io.netty.handler.codec.*;

@@ -1,4 +1,4 @@
-package com.asksunny.ssl;
+package org.summoners.rtmpp.crypto;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -18,7 +18,7 @@ import java.security.KeyStore;
  *        -keystore cert.jks
  * </pre>
  */
-public class SecureSocketKeyStore {
+public class SslKeyStore {
 
 	private static final byte[] CERT_BYTES = { (byte) 254, (byte) 237,
 			(byte) 254, (byte) 237, (byte) 0, (byte) 0, (byte) 0, (byte) 2,
@@ -449,7 +449,7 @@ public class SecureSocketKeyStore {
 		return "mu$tch8ng3";
 	}
 
-	private SecureSocketKeyStore() {
+	private SslKeyStore() {
 
 	}
 

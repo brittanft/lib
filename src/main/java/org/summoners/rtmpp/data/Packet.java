@@ -1,4 +1,4 @@
-package org.summoners.rtmpp;
+package org.summoners.rtmpp.data;
 
 import java.nio.*;
 

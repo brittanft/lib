@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.summoners.rtmpp.data.*;
+
 /**
  * Encodes AMF3 data and packets for RTMP
  * 

@@ -1,29 +1,28 @@
-package com.asksunny.ssl.client;
+package org.summoners.rtmpp.pipeline;
 
 import java.nio.*;
 import java.util.*;
 import java.util.logging.*;
 
-import javax.net.ssl.*;
-
-import org.summoners.netty.pipeline.*;
 import org.summoners.rtmp.encoding.*;
+import org.summoners.rtmpp.codec.*;
+import org.summoners.rtmpp.data.*;
 
 import io.netty.buffer.*;
 import io.netty.channel.*;
 import io.netty.channel.socket.*;
 
-public class HandShake extends ChannelHandlerAdapter {
+public class HandshakeHandler extends ChannelHandlerAdapter {
 	
 	public final SocketChannel channel;
 
-	public HandShake(SocketChannel channel) {
+	public HandshakeHandler(SocketChannel channel) {
 		this.channel = channel;
 	}
 	
-	HandShakeState state = HandShakeState.getFirst();
+	HandshakeState state = HandshakeState.getFirst();
 	
-    private static final Logger logger = Logger.getLogger(HandShake.class.getName());
+    private static final Logger logger = Logger.getLogger(HandshakeHandler.class.getName());
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -55,15 +54,8 @@ public class HandShake extends ChannelHandlerAdapter {
 	
 	@Override
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
-		super.handlerRemoved(ctx);
-		logger.log(Level.INFO, "Handshake removed.");
-		// channel.pipeline().addAfter("bufferer", "decoder", new AMF3Decoder());
-		//channel.pipeline().addBefore("handler", "decoder", new AMF3Decoder());
-		
-		//channel.pipeline().addBefore("decoder", "timeout", new ReadTimeoutHandler(5 * 60))
-		//	.addAfter("decoder", "write_timeout", new WriteTimeoutHandler(5 * 60));
-		
 		channel.pipeline().addLast("encoder", new AMF3ConnectEncoder());
+		
 		ObjectMap params = new ObjectMap();
 		params.put("app", "");
 		params.put("flashVer", "WIN 10,1,85,3");
@@ -84,8 +76,8 @@ public class HandShake extends ChannelHandlerAdapter {
 		//ChannelFuture future = ctx.writeAndFlush(out);
 		//future.syncUninterruptibly().await();
 		
-		SslHandler2 handler = channel.pipeline().get(SslHandler2.class);
-		System.out.println("Donezo?: " + handler.engine().isInboundDone());
+		//SslHandler2 handler = channel.pipeline().get(SslHandler2.class);
+		//System.out.println("Donezo?: " + handler.engine().isInboundDone());
 		
 		ctx.pipeline().channel().config().setAutoRead(true);
 		/*
