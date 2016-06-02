@@ -5,12 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import javax.net.ssl.SSLSocket;
 import javax.xml.bind.DatatypeConverter;
@@ -371,10 +366,13 @@ public class AMF3Decoder {
      * @throws NotImplementedException
      */
     public TypedObject decodeConnect(byte[] data) throws NotImplementedException, EncodingException {
+    	System.out.println("first: " + data[0] + ", len: " + data.length);
+    	
         reset();
 
         dataBuffer = data;
         dataPos = 0;
+        System.out.println(Arrays.toString(dataBuffer));
 
         TypedObject result = new TypedObject("Invoke");
         result.put("result", decodeAMF0());

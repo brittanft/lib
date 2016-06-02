@@ -10,12 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
@@ -80,7 +75,7 @@ public class RTMPSClient {
      * @param args Unused
      */
     public static void main(String[] args) {
-        RTMPSClient client = new RTMPSClient("prod.na1.lol.riotgames.com", 2099, "", "app:/mod_ser.dat", null);
+        RTMPSClient client = new RTMPSClient("prod.na2.lol.riotgames.com", 2099, "", "app:/mod_ser.dat", null);
         try {
             client.connect();
             if (client.isConnected())
@@ -235,7 +230,7 @@ public class RTMPSClient {
             SavingTrustManager tm = new SavingTrustManager(defaultTrustManager);
             context.init(null, new TrustManager[] { tm }, null);
             SSLSocketFactory factory = context.getSocketFactory();
-
+            System.out.println("hit socket factory");
             sslsocket = (SSLSocket)factory.createSocket(server, port);
 
             return tm;
@@ -245,6 +240,7 @@ public class RTMPSClient {
             // recover
             // (unless it's a connectivity issue)
 
+        	e.printStackTrace();
             // Rethrow as an IOException
             throw new IOException(e.getMessage());
         }
@@ -361,9 +357,12 @@ public class RTMPSClient {
         params.put("objectEncoding", 3);
 
         byte[] connect = aec.encodeConnect(params);
+        System.out.println(Arrays.toString(connect));
 
         out.write(connect, 0, connect.length);
         out.flush();
+        
+    	System.out.println("Connection packet sent"); // 5
 
         while (!results.containsKey(1))
             sleep(10);
@@ -380,6 +379,8 @@ public class RTMPSClient {
      */
     private void doHandshake() throws IOException {
         // C0
+    	
+    	System.out.println("establishing handshake");
         byte C0 = 0x03;
         out.write(C0);
 
@@ -438,7 +439,7 @@ public class RTMPSClient {
     public synchronized int invoke(TypedObject packet) throws IOException {
         int id = nextInvokeID();
         pendingInvokes.add(id);
-
+        System.out.println("INVOKED");
         try {
             byte[] data = aec.encodeInvoke(id, packet);
             out.write(data, 0, data.length);
@@ -682,7 +683,10 @@ throw new LeagueException(LeagueErrorCode.NETWORK_ERROR, ex.getMessage());
 
                 while (true) {
                     // Parse the basic header
+                	System.out.println("1: " + in.available()); //0
+                	
                     byte basicHeader = readByte(in);
+                	System.out.println("2: " + in.available()); //16
 
                     int channel = basicHeader & 0x2F;
                     int headerType = basicHeader & 0xC0;
@@ -697,6 +701,34 @@ throw new LeagueException(LeagueErrorCode.NETWORK_ERROR, ex.getMessage());
                     else if (headerType == 0xC0)
                         headerSize = 1;
 
+                    //S: 12, H: 2, C: 2, T: 0
+                    /*establishing handshake
+						Connection packet sent
+						2: 16
+						S: 12, H: 2, C: 2, T: 0
+						Type: 6, Size: 5
+						3: 5
+						Packet completed fucker
+						Continuing
+						250000
+						2
+						1: 0
+						2: 234
+						S: 12, H: 3, C: 3, T: 0
+						Type: 20, Size: 222
+						3: 223
+						1: 95
+						2: 94
+						S: 1, H: -61, C: 3, T: 192
+						3: 94
+						Packet completed fucker
+						Continuing
+						Object decoded: {result=_result, invokeId=1, serviceCall=null, data={DSMessagingVersion=1, code=NetConnection.Connect.Success, level=status, description=Connection succeeded., details=null, id=ACC6603B-801C-E2B3-B114-C7399C7B0329, objectEncoding=3, }, }
+						1: 0
+						Success
+						Success
+						*/
+                    System.out.println("S: " + headerSize + ", H: " + basicHeader + ", C: " + channel + ", T: " + headerType);
                     // Retrieve the packet or make a new one
                     if (!packets.containsKey(channel))
                         packets.put(channel, new Packet());
@@ -708,6 +740,8 @@ throw new LeagueException(LeagueErrorCode.NETWORK_ERROR, ex.getMessage());
                         for (int i = 0; i < header.length; i++)
                             header[i] = readByte(in);
 
+            			
+            			System.out.println("Data: " + Arrays.toString(header));
                         if (headerSize >= 8) {
                             int size = 0;
                             for (int i = 3; i < 6; i++)
@@ -716,20 +750,27 @@ throw new LeagueException(LeagueErrorCode.NETWORK_ERROR, ex.getMessage());
 
                             p.setType(header[6]);
                         }
+                        
+                        System.out.println("Type: " + p.getType() + ", Size: "+ p.getSize());
                     }
+                	System.out.println("3: " + in.available()); // 5
 
                     // Read rest of packet
                     for (int i = 0; i < 128; i++) {
                         byte b = readByte(in);
                         p.add(b);
 
-                        if (p.isComplete())
-                            break;
+                        if (p.isComplete()) {
+                        	System.out.println("Packet completed fucker");
+                        	break;
+                        }
                     }
 
                     // Continue reading if we didn't complete a packet
                     if (!p.isComplete())
                         continue;
+                    
+                    System.out.println("Continuing");
 
                     // Remove the read packet
                     packets.remove(channel);
@@ -746,7 +787,10 @@ throw new LeagueException(LeagueErrorCode.NETWORK_ERROR, ex.getMessage());
                         int windowSize = 0;
                         for (int i = 0; i < 4; i++)
                             windowSize = windowSize * 256 + (data[i] & 0xFF);
+                        
+                        System.out.println(windowSize);
                         int type = data[4];
+                        System.out.println(type);
                         continue;
                     }
                     else if (p.getType() == 0x03) // Ack
@@ -767,6 +811,8 @@ throw new LeagueException(LeagueErrorCode.NETWORK_ERROR, ex.getMessage());
                         System.out.println();
                         continue;
                     }
+                    
+                	System.out.println("Object decoded: " + result); // 5
 
                     // Store result
                     Integer id = result.getInt("invokeId");

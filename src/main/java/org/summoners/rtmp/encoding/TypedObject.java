@@ -1,5 +1,6 @@
 package org.summoners.rtmp.encoding;
 
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -30,6 +31,11 @@ public class TypedObject extends ObjectMap {
     public TypedObject(String type) {
         this.type = type;
     }
+
+	public TypedObject(Map<String, Object> map) {
+        this.type = null;
+		this.putAll(map);
+	}
 
     /**
      * Creates a TypedObject from an ObjectMap
@@ -185,4 +191,12 @@ public class TypedObject extends ObjectMap {
     private String indent(String data) {
         return linePattern.matcher(data.trim()).replaceAll("    ");
     }
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type2) {
+		this.type = type2;
+	}
 }
